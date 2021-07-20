@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../connectors/onair_api.dart';
+import '../models/pending_jobs.dart';
 import '../models/settings.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -53,11 +54,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return;
       }
       _settings.updateSettings(oaApiKey: _oaApiKey, companyId: _companyId);
-      //Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
-      Navigator.of(context).pop();
+      Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
     }
     if (_hideSightSeeing != _settings.hideSightSeeing) {
       _settings.updateSettings(hideSightSeeing: _hideSightSeeing);
+      final pendingJobs = Provider.of<PendingJobs>(context, listen: false);
+      pendingJobs.hideSightSeeing(_hideSightSeeing);
     }
     Navigator.of(context).pop();
   }

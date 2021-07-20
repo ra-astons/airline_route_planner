@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import './pending_job_leg_item.dart';
 import '../models/pending_jobs.dart';
-import '../models/settings.dart';
 
 class PendingJobsList extends StatefulWidget {
   @override
@@ -13,13 +12,11 @@ class PendingJobsList extends StatefulWidget {
 class _PendingJobsListState extends State<PendingJobsList> {
   var _isInit = true;
   late PendingJobs _pendingJobs;
-  late Settings _settings;
 
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      _pendingJobs = Provider.of<PendingJobs>(context, listen: false);
-      _settings = Provider.of<Settings>(context);
+      _pendingJobs = Provider.of<PendingJobs>(context);
       _isInit = false;
     }
     super.didChangeDependencies();
@@ -27,10 +24,8 @@ class _PendingJobsListState extends State<PendingJobsList> {
 
   @override
   Widget build(BuildContext context) {
-    final _displayedJobs =
-        _settings.hideSightSeeing ? _pendingJobs.jobs.where((j) => !j.hasSightSeeingLeg).toList() : _pendingJobs.jobs;
     return ListView.builder(
-      itemCount: _displayedJobs.length,
+      itemCount: _pendingJobs.jobs.length,
       itemBuilder: (_, index) {
         return Column(
           children: [
@@ -39,7 +34,7 @@ class _PendingJobsListState extends State<PendingJobsList> {
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: Text(
-                    _displayedJobs[index].description,
+                    _pendingJobs.jobs[index].description,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -48,7 +43,7 @@ class _PendingJobsListState extends State<PendingJobsList> {
             Divider(
               height: 2,
             ),
-            ..._displayedJobs[index].legs.map((leg) {
+            ..._pendingJobs.jobs[index].legs.map((leg) {
               return Column(
                 children: [
                   PendingJobLegItem(leg.id),

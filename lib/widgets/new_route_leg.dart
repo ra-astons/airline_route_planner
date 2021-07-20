@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../models/pending_jobs.dart';
 
 class NewRouteLeg extends StatefulWidget {
   @override
@@ -7,6 +10,13 @@ class NewRouteLeg extends StatefulWidget {
 
 class _NewRouteLegState extends State<NewRouteLeg> {
   final _formKey = GlobalKey<FormState>();
+  late PendingJobs _pendingJobs;
+
+  @override
+  void initState() {
+    _pendingJobs = Provider.of<PendingJobs>(context, listen: false);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +31,9 @@ class _NewRouteLegState extends State<NewRouteLeg> {
               decoration: InputDecoration(
                 labelText: 'ICAO',
               ),
+              onChanged: (value) {
+                _pendingJobs.filterByDeparture(value.toUpperCase());
+              },
             ),
           ),
           ElevatedButton(
