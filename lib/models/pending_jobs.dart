@@ -6,6 +6,7 @@ class PendingJobs with ChangeNotifier {
   List<Job> _jobs = [];
   String _departureFilter = '';
   var _hideSightSeeing = false;
+  var _hideCompleted = false;
 
   List<Job> get jobs {
     List<Job> jobs = [..._jobs];
@@ -18,6 +19,9 @@ class PendingJobs with ChangeNotifier {
     return jobs;
   }
 
+  bool get completedHidden => _hideCompleted;
+  bool get sightSeeingHidden => _hideSightSeeing;
+
   void filterByDeparture(String icao) {
     _departureFilter = icao;
     _jobs.forEach((j) => j.filterByDeparture(icao));
@@ -26,6 +30,12 @@ class PendingJobs with ChangeNotifier {
 
   void hideSightSeeing(bool hideSightSeeing) {
     _hideSightSeeing = hideSightSeeing;
+    notifyListeners();
+  }
+
+  void hideCompleted(bool hideCompleted) {
+    _hideCompleted = hideCompleted;
+    _jobs.forEach((j) => j.hideCompleted(hideCompleted));
     notifyListeners();
   }
 

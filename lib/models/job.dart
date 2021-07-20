@@ -5,6 +5,7 @@ class Job {
   final String description;
   final List<JobLeg> _legs;
   String _departureFilter = '';
+  var _hideCompleted = false;
 
   Job(
     this.id,
@@ -13,7 +14,10 @@ class Job {
   );
 
   List<JobLeg> get legs {
-    List<JobLeg> legs = [..._legs.where((l) => !l.isComplete)];
+    List<JobLeg> legs = [..._legs];
+    if (_hideCompleted) {
+      legs = [..._legs.where((l) => !l.isComplete)];
+    }
     if (_departureFilter.isNotEmpty) {
       legs = legs.where((l) => l.departureAirport.icao.contains(_departureFilter)).toList();
     }
@@ -26,6 +30,10 @@ class Job {
 
   void filterByDeparture(String icao) {
     _departureFilter = icao;
+  }
+
+  void hideCompleted(bool hideCompleted) {
+    _hideCompleted = hideCompleted;
   }
 
   factory Job.fromJson(Map<String, dynamic> json) {

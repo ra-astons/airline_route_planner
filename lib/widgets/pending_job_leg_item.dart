@@ -34,7 +34,14 @@ class _PendingJobLegItemState extends State<PendingJobLegItem> {
                       activeColor: Colors.orangeAccent,
                       checkColor: Colors.orangeAccent,
                       value: true,
-                      onChanged: (_) {},
+                      onChanged: null,
+                    );
+                  } else if (jobLeg.isComplete) {
+                    return Checkbox(
+                      value: true,
+                      fillColor: MaterialStateProperty.resolveWith((_) => Colors.green),
+                      checkColor: Colors.greenAccent,
+                      onChanged: null,
                     );
                   } else {
                     return Checkbox(
