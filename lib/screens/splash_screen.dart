@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import './settings_screen.dart';
 import '../models/settings.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -25,8 +26,9 @@ class _SplashScreenState extends State<SplashScreen> {
     while (!settings.isLoaded) {
       await Future.delayed(Duration(milliseconds: 1));
     }
+    final navigator = Navigator.of(context);
     if (settings.oaApiKey.isEmpty || settings.companyId.isEmpty) {
-      print('Go to settings screen');
+      navigator.pushReplacementNamed(SettingsScreen.routeName);
     } else {
       //TODO: Redirect
       print('Go to Planner screen');
