@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import './airport.dart';
 
 enum JobLegTypes {
@@ -11,7 +13,7 @@ enum SeatCategories {
   first,
 }
 
-class JobLeg {
+class JobLeg with ChangeNotifier {
   final String id;
   final String description;
   final Airport departureAirport;
@@ -22,6 +24,7 @@ class JobLeg {
   final int passengers;
   SeatCategories seatCategory;
   final int charterType;
+  var _isSelected = false;
 
   JobLeg({
     required this.id,
@@ -36,9 +39,16 @@ class JobLeg {
     this.charterType = 0,
   });
 
+  bool get isSelected => _isSelected;
+
   bool get isSightSeeing => charterType == 3;
 
   bool get isComplete => currentAirport != null && currentAirport == destinationAirport && !isSightSeeing;
+
+  void toggleSelect(bool selected) {
+    _isSelected = selected;
+    notifyListeners();
+  }
 
   String get seatCategoryString {
     switch (seatCategory) {

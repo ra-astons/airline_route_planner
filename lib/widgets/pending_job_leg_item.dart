@@ -23,6 +23,19 @@ class _PendingJobLegItemState extends State<PendingJobLegItem> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
+            width: 30,
+            child: Checkbox(
+              value: leg.isSelected,
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    leg.toggleSelect(value);
+                  });
+                }
+              },
+            ),
+          ),
+          SizedBox(
             width: 40,
             child: Text(
               leg.departureAirport.icao,
