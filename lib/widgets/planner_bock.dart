@@ -11,6 +11,7 @@ class PlannerBlock extends StatelessWidget {
       margin: EdgeInsets.all(5),
       child: Card(
         elevation: 5,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
         child: this.child,
       ),
     );

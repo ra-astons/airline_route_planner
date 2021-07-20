@@ -39,6 +39,15 @@ class PendingJobs with ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleSelectLeg(String legId, bool selected) {
+    _jobs
+        .firstWhere((j) => j.legs.any((l) => l.id == legId))
+        .legs
+        .firstWhere((l) => l.id == legId)
+        .toggleSelect(selected);
+    notifyListeners();
+  }
+
   void updateJobs(List<Job> jobs) {
     _jobs = jobs;
     notifyListeners();

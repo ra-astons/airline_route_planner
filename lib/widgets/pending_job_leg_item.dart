@@ -50,7 +50,7 @@ class _PendingJobLegItemState extends State<PendingJobLegItem> {
                       onChanged: (value) {
                         if (value != null) {
                           setState(() {
-                            jobLeg.toggleSelect(value);
+                            _pendingJobs.toggleSelectLeg(jobLeg.id, value);
                           });
                         }
                       },
