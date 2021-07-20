@@ -16,6 +16,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late Settings _settings;
   var _oaApiKey = '';
   var _companyId = '';
+  var _hideSightSeeing = false;
 
   String? _validateOaKey(String? key) {
     final oaKeyRegExp = RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$');
@@ -45,13 +46,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     _formKey.currentState!.save();
-    final onAir = OnAirApi(_oaApiKey, _companyId);
-    if (!await onAir.validateCredentials()) {
-      _showInvalidCredsDialog();
-      return;
+    if (_oaApiKey != _settings.oaApiKey || _companyId != _settings.companyId) {
+      final onAir = OnAirApi(_oaApiKey, _companyId);
+      if (!await onAir.validateCredentials()) {
+        _showInvalidCredsDialog();
+        return;
+      }
+      _settings.updateSettings(oaApiKey: _oaApiKey, companyId: _companyId);
+      //Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+      Navigator.of(context).pop();
     }
-    _settings.updateSettings(oaApiKey: _oaApiKey, companyId: _companyId);
-    Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+    if (_hideSightSeeing != _settings.hideSightSeeing) {
+      _settings.updateSettings(hideSightSeeing: _hideSightSeeing);
+    }
+    Navigator.of(context).pop();
   }
 
   @override
@@ -59,6 +67,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _settings = Provider.of<Settings>(context, listen: false);
     _oaApiKey = _settings.oaApiKey;
     _companyId = _settings.companyId;
+    _hideSightSeeing = _settings.hideSightSeeing;
     super.initState();
   }
 
@@ -88,6 +97,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   decoration: InputDecoration(labelText: 'OnAir Company ID'),
                   validator: _validateOaKey,
                   onSaved: (value) => _companyId = value!,
+                ),
+                SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Hide sight-seeing jobs'),
+                    Switch(
+                      value: _hideSightSeeing,
+                      onChanged: (value) {
+                        setState(() {
+                          _hideSightSeeing = value;
+                        });
+                      },
+                    ),
+                  ],
                 ),
                 SizedBox(height: 30),
                 ElevatedButton(

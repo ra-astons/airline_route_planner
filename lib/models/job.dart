@@ -11,7 +11,9 @@ class Job {
     this._legs,
   );
 
-  List<JobLeg> get legs => [..._legs];
+  List<JobLeg> get legs => [..._legs.where((l) => !l.isComplete)];
+
+  bool get hasSightSeeingLeg => _legs.any((l) => l.isSightSeeing);
 
   factory Job.fromJson(Map<String, dynamic> json) {
     final List<JobLeg> jobLegs = [];

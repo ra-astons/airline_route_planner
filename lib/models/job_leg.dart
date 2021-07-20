@@ -36,6 +36,10 @@ class JobLeg {
     this.charterType = 0,
   });
 
+  bool get isSightSeeing => charterType == 3;
+
+  bool get isComplete => currentAirport != null && currentAirport == destinationAirport && !isSightSeeing;
+
   String get seatCategoryString {
     switch (seatCategory) {
       case SeatCategories.economy:
