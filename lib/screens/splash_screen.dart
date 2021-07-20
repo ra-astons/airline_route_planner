@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import './planner_screen.dart';
 import './settings_screen.dart';
 import '../models/settings.dart';
 
@@ -30,8 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (settings.oaApiKey.isEmpty || settings.companyId.isEmpty) {
       navigator.pushReplacementNamed(SettingsScreen.routeName);
     } else {
-      //TODO: Redirect
-      print('Go to Planner screen');
+      navigator.pushReplacementNamed(PlannerScreen.routeName);
     }
   }
 

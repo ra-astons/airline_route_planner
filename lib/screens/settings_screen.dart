@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../connectors/onair_api.dart';
 import '../models/settings.dart';
+import '../screens/planner_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   static const routeName = '/settings';
@@ -51,8 +52,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       return;
     }
     _settings.updateSettings(oaApiKey: _oaApiKey, companyId: _companyId);
-    //TODO: Redirect
-    print('Go to Planner screen');
+    Navigator.of(context).pushReplacementNamed(PlannerScreen.routeName);
   }
 
   @override

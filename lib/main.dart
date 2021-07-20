@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import './models/settings.dart';
+import './screens/planner_screen.dart';
 import './screens/settings_screen.dart';
 import './screens/splash_screen.dart';
 
@@ -26,6 +27,7 @@ class AirlineRoutePlanner extends StatelessWidget {
         routes: {
           SplashScreen.routeName: (_) => SplashScreen(),
           SettingsScreen.routeName: (_) => SettingsScreen(),
+          PlannerScreen.routeName: (_) => PlannerScreen(title),
         },
       ),
     );
