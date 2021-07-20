@@ -29,45 +29,39 @@ class _PendingJobsListState extends State<PendingJobsList> {
   Widget build(BuildContext context) {
     final _displayedJobs =
         _settings.hideSightSeeing ? _pendingJobs.jobs.where((j) => !j.hasSightSeeingLeg).toList() : _pendingJobs.jobs;
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-      child: Card(
-        elevation: 5,
-        child: ListView.builder(
-          itemCount: _displayedJobs.length,
-          itemBuilder: (_, index) {
-            return Column(
+    return ListView.builder(
+      itemCount: _displayedJobs.length,
+      itemBuilder: (_, index) {
+        return Column(
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Text(
-                        _displayedJobs[index].description,
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Text(
+                    _displayedJobs[index].description,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
-                Divider(
-                  height: 2,
-                ),
-                ..._displayedJobs[index].legs.map((leg) {
-                  return Column(
-                    children: [
-                      PendingJobLegItem(leg.id),
-                      Divider(
-                        height: 2,
-                      ),
-                    ],
-                  );
-                }).toList(),
-                SizedBox(height: 12),
               ],
-            );
-          },
-        ),
-      ),
+            ),
+            Divider(
+              height: 2,
+            ),
+            ..._displayedJobs[index].legs.map((leg) {
+              return Column(
+                children: [
+                  PendingJobLegItem(leg.id),
+                  Divider(
+                    height: 2,
+                  ),
+                ],
+              );
+            }).toList(),
+            SizedBox(height: 12),
+          ],
+        );
+      },
     );
   }
 }
