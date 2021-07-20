@@ -5,6 +5,7 @@ import '../widgets/app_drawer.dart';
 import '../widgets/new_route_leg.dart';
 import '../widgets/pending_jobs_list.dart';
 import '../widgets/planner_bock.dart';
+import '../widgets/route_legs_list.dart';
 
 class PlannerScreen extends StatefulWidget {
   static const routeName = '/planner';
@@ -55,7 +56,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
           ),
           Expanded(
             flex: 2,
-            child: PlannerBlock(child: Text('ROUTE PLANNER')),
+            child: PlannerBlock(child: RouteLegsList()),
           ),
         ],
       ),

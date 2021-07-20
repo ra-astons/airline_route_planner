@@ -22,6 +22,8 @@ class Job {
 
   bool get hasSightSeeingLeg => _legs.any((l) => l.isSightSeeing);
 
+  List<JobLeg> get selectedLegs => _legs.where((l) => l.isSelected).toList();
+
   void filterByDeparture(String icao) {
     _departureFilter = icao;
   }
