@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
+
 import './aircraft.dart';
 
-class Fleet {
+class Fleet with ChangeNotifier {
   List<Aircraft> _aircrafts = [];
 
   Fleet();
@@ -14,6 +16,7 @@ class Fleet {
     if (_aircrafts.isNotEmpty) {
       _aircrafts.first.isActive = true;
     }
+    notifyListeners();
   }
 
   void setActive(String id) {
@@ -24,5 +27,6 @@ class Fleet {
         aircraft.isActive = false;
       }
     });
+    notifyListeners();
   }
 }

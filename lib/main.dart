@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import './models/fleet.dart';
+import './models/pending_jobs.dart';
 import './models/settings.dart';
 import './screens/planner_screen.dart';
 import './screens/settings_screen.dart';
@@ -17,6 +19,8 @@ class AirlineRoutePlanner extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => Settings()),
+        ChangeNotifierProvider(create: (_) => Fleet()),
+        ChangeNotifierProvider(create: (_) => PendingJobs())
       ],
       child: MaterialApp(
         title: title,
