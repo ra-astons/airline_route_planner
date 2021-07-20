@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../widgets/aircraft_selector.dart';
 import '../widgets/app_drawer.dart';
+import '../widgets/pending_jobs_list.dart';
 
 class PlannerScreen extends StatefulWidget {
   static const routeName = '/planner';
@@ -28,8 +29,26 @@ class _PlannerScreenState extends State<PlannerScreen> {
         ),
       ),
       drawer: AppDrawer(widget.title),
-      body: Center(
-        child: Text('PLANNER'),
+      body: Column(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: PendingJobsList(),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Text('MAP'),
+                ),
+              ],
+            ),
+          ),
+          Text('NEW LEG FORM'),
+          Expanded(flex: 2, child: Text('ROUTE PLANNER')),
+        ],
       ),
     );
   }
