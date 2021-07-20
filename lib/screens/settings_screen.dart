@@ -52,12 +52,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
       return;
     }
     _settings.updateSettings(oaApiKey: _oaApiKey, companyId: _companyId);
-    Navigator.of(context).pushReplacementNamed(PlannerScreen.routeName);
+
+    final navigator = Navigator.of(context);
+    if (navigator.canPop())
+      navigator.pop();
+    else
+      navigator.pushReplacementNamed(PlannerScreen.routeName);
   }
 
   @override
   void initState() {
     _settings = Provider.of<Settings>(context, listen: false);
+    _oaApiKey = _settings.oaApiKey;
+    _companyId = _settings.companyId;
     super.initState();
   }
 
