@@ -6,7 +6,7 @@ class PendingJobs with ChangeNotifier {
   List<Job> _jobs = [];
   String _departureFilter = '';
   var _hideSightSeeing = false;
-  var _hideCompleted = false;
+  var _hideCompleted = true;
 
   List<Job> get jobs {
     List<Job> jobs = [..._jobs];

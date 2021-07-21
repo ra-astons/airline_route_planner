@@ -5,7 +5,7 @@ class Job {
   final String description;
   final List<JobLeg> _legs;
   String _departureFilter = '';
-  var _hideCompleted = false;
+  var _hideCompleted = true;
 
   Job(
     this.id,
