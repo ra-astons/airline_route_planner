@@ -37,6 +37,13 @@ class _PendingJobLegItemState extends State<PendingJobLegItem> {
                       value: true,
                       onChanged: null,
                     );
+                  } else if (jobLeg.isUnloaded) {
+                    return Checkbox(
+                      activeColor: Colors.orangeAccent,
+                      checkColor: Colors.green,
+                      value: true,
+                      onChanged: null,
+                    );
                   } else if (jobLeg.isComplete) {
                     return Checkbox(
                       value: true,
@@ -60,6 +67,7 @@ class _PendingJobLegItemState extends State<PendingJobLegItem> {
                 },
               ),
             ),
+            VerticalDivider(),
             SizedBox(
               width: 40,
               child: Text(

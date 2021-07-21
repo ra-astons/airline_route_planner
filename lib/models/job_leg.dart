@@ -26,6 +26,7 @@ class JobLeg with ChangeNotifier {
   final int charterType;
   var _isSelected = false;
   var _isLoaded = false;
+  var _isUnloaded = false;
 
   JobLeg({
     required this.id,
@@ -48,6 +49,8 @@ class JobLeg with ChangeNotifier {
 
   bool get isLoaded => _isLoaded;
 
+  bool get isUnloaded => _isUnloaded;
+
   void toggleSelect(bool selected) {
     _isSelected = selected;
     notifyListeners();
@@ -56,6 +59,12 @@ class JobLeg with ChangeNotifier {
   void load() {
     _isLoaded = true;
     _isSelected = false;
+    notifyListeners();
+  }
+
+  void unload() {
+    _isLoaded = false;
+    _isUnloaded = true;
     notifyListeners();
   }
 

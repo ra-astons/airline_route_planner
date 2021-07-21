@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../helpers/string_format.dart';
 import '../models/route_plan.dart';
 
 class RouteLegsList extends StatelessWidget {
@@ -10,14 +11,19 @@ class RouteLegsList extends StatelessWidget {
     return ListView.builder(
       itemCount: routePlan.legs.length,
       itemBuilder: (_, index) {
-        var totalCargo = 0.0;
-        totalCargo = routePlan.legs[index].jobLegs.fold(0.0, (sum, l) => sum + l.weight);
-        var totalPax = 0;
-        totalPax = routePlan.legs[index].jobLegs.fold(0, (sum, l) => sum + l.passengers);
+        var loadedCargo = 0.0;
+        loadedCargo = routePlan.legs[index].loadedJobLegs.fold(0.0, (sum, l) => sum + l.weight);
+        var loadedPax = 0;
+        loadedPax = routePlan.legs[index].loadedJobLegs.fold(0, (sum, l) => sum + l.passengers);
+        var unloadedCargo = 0.0;
+        unloadedCargo = routePlan.legs[index].unloadedJobLegs.fold(0.0, (sum, l) => sum + l.weight);
+        var unloadedPax = 0;
+        unloadedPax = routePlan.legs[index].unloadedJobLegs.fold(0, (sum, l) => sum + l.passengers);
         return IntrinsicHeight(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              VerticalDivider(),
               SizedBox(
                 width: 40,
                 child: Text(
@@ -27,9 +33,33 @@ class RouteLegsList extends StatelessWidget {
               ),
               VerticalDivider(),
               SizedBox(
+                width: 100,
+                child: Text(
+                  poundsFormat(loadedCargo),
+                  textAlign: TextAlign.end,
+                ),
+              ),
+              VerticalDivider(),
+              SizedBox(
                 width: 40,
                 child: Text(
-                  routePlan.legs[index].jobLegs.length.toString(),
+                  loadedPax.toString(),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              VerticalDivider(),
+              SizedBox(
+                width: 100,
+                child: Text(
+                  poundsFormat(unloadedCargo),
+                  textAlign: TextAlign.end,
+                ),
+              ),
+              VerticalDivider(),
+              SizedBox(
+                width: 40,
+                child: Text(
+                  unloadedPax.toString(),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -37,15 +67,7 @@ class RouteLegsList extends StatelessWidget {
               SizedBox(
                 width: 40,
                 child: Text(
-                  totalCargo.toString(),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              VerticalDivider(),
-              SizedBox(
-                width: 40,
-                child: Text(
-                  totalPax.toString(),
+                  routePlan.legs[index].fuelPercentage.toString(),
                   textAlign: TextAlign.center,
                 ),
               ),

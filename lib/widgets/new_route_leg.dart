@@ -22,9 +22,11 @@ class _NewRouteLegState extends State<NewRouteLeg> {
   final _errorTextStyle = TextStyle(color: Colors.red);
   late PendingJobs _pendingJobs;
   late Fleet _fleet;
+  late RoutePlan _routePlan;
   var _airportIcao = '';
   var _loadedFuelPerc = 100.0;
   var _totalWeight = 0.0;
+  var _totalCargo = 0.0;
   var _totalPayload = 0.0;
   var _totalPax = 0;
   var _overWeight = false;
@@ -38,28 +40,29 @@ class _NewRouteLegState extends State<NewRouteLeg> {
       final List<JobLeg> jobLegs = [];
       _pendingJobs.jobs.forEach((j) {
         jobLegs.addAll(j.selectedLegs);
-        jobLegs.forEach((l) => l.load());
       });
-      final routePlan = Provider.of<RoutePlan>(context, listen: false);
-      routePlan.addRouteLeg(RouteLeg(_airportIcao, jobLegs, 100));
+      _routePlan.addRouteLeg(RouteLeg(_airportIcao, jobLegs, _loadedFuelPerc.floor()));
     }
   }
 
   void _calculateStats() {
     // Reset
     _totalPayload = 0.0;
-    _totalPax = 0;
+    _totalCargo = _routePlan.currentCargo;
+    _totalPax = _routePlan.currentPax;
     _totalWeight = 0.0;
 
-    // Payload
     _loadedLegs = _pendingJobs.jobs.map((e) => e.selectedLegs).expand((e) => e).toList();
-    _totalPayload += _loadedLegs.fold(0.0, (sum, l) => sum + l.weight);
-    _totalPayload += _loadedLegs.fold(0.0, (sum, l) => sum + l.passengers * PAX_WEIGHT);
-    _totalPayload += PAX_WEIGHT; // Pilot
+
+    // Cargo
+    _totalCargo += _loadedLegs.fold(0.0, (sum, l) => sum + l.weight);
 
     // Pax
     _totalPax += _loadedLegs.fold(0, (sum, l) => sum + l.passengers);
     _overPax = _totalPax > _fleet.activeAircraft.maxSeats;
+
+    // Payload
+    _totalPayload += _totalCargo + _totalPax * PAX_WEIGHT + PAX_WEIGHT;
 
     // Weight
     _totalWeight += _fleet.activeAircraft.emptyWeight + _totalPayload;
@@ -80,8 +83,10 @@ class _NewRouteLegState extends State<NewRouteLeg> {
   void initState() {
     _pendingJobs = Provider.of<PendingJobs>(context, listen: false);
     _fleet = Provider.of<Fleet>(context, listen: false);
+    _routePlan = Provider.of<RoutePlan>(context, listen: false);
     _pendingJobs.addListener(_calculateStats);
     _fleet.addListener(_calculateStats);
+    _routePlan.addListener(_calculateStats);
     super.initState();
   }
 
