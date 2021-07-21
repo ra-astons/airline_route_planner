@@ -5,12 +5,12 @@ import './job.dart';
 class PendingJobs with ChangeNotifier {
   List<Job> _jobs = [];
   String _departureFilter = '';
-  var _hideSightSeeing = false;
-  var _hideCompleted = true;
+  var _showSightSeeing = false;
+  var _showCompleted = false;
 
   List<Job> get jobs {
     List<Job> jobs = [..._jobs];
-    if (_hideSightSeeing) {
+    if (!_showSightSeeing) {
       jobs = jobs.where((j) => !j.hasSightSeeingLeg).toList();
     }
     if (_departureFilter.isNotEmpty) {
@@ -19,8 +19,8 @@ class PendingJobs with ChangeNotifier {
     return jobs;
   }
 
-  bool get completedHidden => _hideCompleted;
-  bool get sightSeeingHidden => _hideSightSeeing;
+  bool get completedShown => _showCompleted;
+  bool get sightSeeingShown => _showSightSeeing;
 
   void filterByDeparture(String icao) {
     _departureFilter = icao;
@@ -28,14 +28,14 @@ class PendingJobs with ChangeNotifier {
     notifyListeners();
   }
 
-  void hideSightSeeing(bool hideSightSeeing) {
-    _hideSightSeeing = hideSightSeeing;
+  void showSightSeeing(bool showSightSeeing) {
+    _showSightSeeing = showSightSeeing;
     notifyListeners();
   }
 
-  void hideCompleted(bool hideCompleted) {
-    _hideCompleted = hideCompleted;
-    _jobs.forEach((j) => j.hideCompleted(hideCompleted));
+  void showCompleted(bool showCompleted) {
+    _showCompleted = showCompleted;
+    _jobs.forEach((j) => j.showCompleted(showCompleted));
     notifyListeners();
   }
 

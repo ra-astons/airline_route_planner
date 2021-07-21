@@ -15,14 +15,14 @@ class AppDrawer extends StatefulWidget {
 
 class _AppDrawerState extends State<AppDrawer> {
   late PendingJobs _pendingJobs;
-  var _hideSightSeeing = false;
-  var _hideCompleted = false;
+  var _showSightSeeing = false;
+  var _showCompleted = false;
 
   @override
   void initState() {
     _pendingJobs = Provider.of<PendingJobs>(context, listen: false);
-    _hideCompleted = _pendingJobs.completedHidden;
-    _hideSightSeeing = _pendingJobs.sightSeeingHidden;
+    _showCompleted = _pendingJobs.completedShown;
+    _showSightSeeing = _pendingJobs.sightSeeingShown;
     super.initState();
   }
 
@@ -55,28 +55,28 @@ class _AppDrawerState extends State<AppDrawer> {
             height: 20,
           ),
           ListTile(
-            title: Text('Hide sight-seeing jobs'),
+            title: Text('Show sight-seeing jobs'),
             trailing: Switch(
-              value: _hideSightSeeing,
+              value: _showSightSeeing,
               activeColor: theme.accentColor,
               onChanged: (value) {
                 setState(() {
-                  _hideSightSeeing = value;
+                  _showSightSeeing = value;
                 });
-                _pendingJobs.hideSightSeeing(_hideSightSeeing);
+                _pendingJobs.showSightSeeing(_showSightSeeing);
               },
             ),
           ),
           ListTile(
-            title: Text('Hide completed legs'),
+            title: Text('Show completed legs'),
             trailing: Switch(
-              value: _hideCompleted,
+              value: _showCompleted,
               activeColor: theme.accentColor,
               onChanged: (value) {
                 setState(() {
-                  _hideCompleted = value;
+                  _showCompleted = value;
                 });
-                _pendingJobs.hideCompleted(_hideCompleted);
+                _pendingJobs.showCompleted(_showCompleted);
               },
             ),
           ),
