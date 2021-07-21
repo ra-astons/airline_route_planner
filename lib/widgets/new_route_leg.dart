@@ -136,9 +136,6 @@ class _NewRouteLegState extends State<NewRouteLeg> {
               decoration: InputDecoration(
                 labelText: 'ICAO',
               ),
-              onChanged: (value) {
-                _pendingJobs.filterByDeparture(value.toUpperCase());
-              },
               validator: (value) {
                 if (value == null || value.isEmpty) return 'ICAO missing';
                 if (value.length != 4) return 'Invalid ICAO';
