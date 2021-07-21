@@ -20,14 +20,16 @@ class NewRouteLeg extends StatefulWidget {
 }
 
 class _NewRouteLegState extends State<NewRouteLeg> {
-  final _formKey = GlobalKey<FormState>();
-  final _okTextStyle = TextStyle(color: Colors.white);
-  final _errorTextStyle = TextStyle(color: Colors.red);
   late Settings _settings;
   late PendingJobs _pendingJobs;
   late Fleet _fleet;
   late RoutePlan _routePlan;
+
+  final _formKey = GlobalKey<FormState>();
+  final _okTextStyle = TextStyle(color: Colors.white);
+  final _errorTextStyle = TextStyle(color: Colors.red);
   var _airportIcao = '';
+
   var _loadedFuelPerc = 100.0;
   var _totalWeight = 0.0;
   var _totalCargo = 0.0;
@@ -36,6 +38,7 @@ class _NewRouteLegState extends State<NewRouteLeg> {
   var _overWeight = false;
   var _overPayload = false;
   var _overPax = false;
+  var _addDisabled = false;
   List<JobLeg> _loadedLegs = [];
 
   void _submit() async {
@@ -103,9 +106,15 @@ class _NewRouteLegState extends State<NewRouteLeg> {
     final freeFuelPerc = (freeFuelWeight / fuelCapacity * 100).floor().toDouble();
 
     // Fuel
-    if (_loadedFuelPerc > freeFuelPerc) _loadedFuelPerc = freeFuelPerc;
+    if (freeFuelPerc < 0) {
+      _loadedFuelPerc = 0;
+    } else if (_loadedFuelPerc > freeFuelPerc) {
+      _loadedFuelPerc = freeFuelPerc;
+    }
     final fuelWeight = _loadedFuelPerc * _fleet.activeAircraft.fuelCapacity * _fleet.activeAircraft.fuel.density / 100;
     _totalWeight += fuelWeight;
+    _overWeight = _totalWeight > _fleet.activeAircraft.maxGrossWeight;
+    _addDisabled = (_overWeight || _overPayload || _overPax);
 
     setState(() {});
   }
@@ -126,14 +135,16 @@ class _NewRouteLegState extends State<NewRouteLeg> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: Row(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Container(
-            width: 100,
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            margin: EdgeInsets.symmetric(horizontal: 75),
             child: TextFormField(
+              textAlign: TextAlign.center,
+              maxLength: 4,
               decoration: InputDecoration(
+                alignLabelWithHint: true,
                 labelText: 'ICAO',
               ),
               validator: (value) {
@@ -144,67 +155,71 @@ class _NewRouteLegState extends State<NewRouteLeg> {
             ),
           ),
           Container(
-            width: 320,
+            margin: EdgeInsets.symmetric(horizontal: 50),
             child: Slider(
-                value: _loadedFuelPerc,
-                min: 0.0,
-                max: 100.0,
-                divisions: 100,
-                label: '${_loadedFuelPerc.toInt()}%',
-                onChanged: (value) {
-                  _loadedFuelPerc = value;
-                  _calculateStats();
-                }),
-          ),
-          VerticalDivider(),
-          Container(
-            child: Row(
-              children: [
-                Text('Gross weight:', style: _overWeight ? _errorTextStyle : _okTextStyle),
-                SizedBox(
-                  width: 10,
-                ),
-                Text(poundsFormat(_totalWeight), style: _overWeight ? _errorTextStyle : _okTextStyle),
-                Text('/', style: _overWeight ? _errorTextStyle : _okTextStyle),
-                Text(poundsFormat(_fleet.activeAircraft.maxGrossWeight),
-                    style: _overWeight ? _errorTextStyle : _okTextStyle),
-              ],
+              value: _loadedFuelPerc,
+              min: 0.0,
+              max: 100.0,
+              divisions: 100,
+              label: 'Fuel loaded: ${_loadedFuelPerc.toInt()}%',
+              onChanged: (value) {
+                _loadedFuelPerc = value;
+                _calculateStats();
+              },
             ),
           ),
-          VerticalDivider(),
-          Container(
-            child: Row(
-              children: [
-                Text('Payload:', style: _overPayload ? _errorTextStyle : _okTextStyle),
-                SizedBox(
-                  width: 10,
-                ),
-                Text(poundsFormat(_totalPayload), style: _overPayload ? _errorTextStyle : _okTextStyle),
-                Text('/', style: _overPayload ? _errorTextStyle : _okTextStyle),
-                Text(poundsFormat(_fleet.activeAircraft.maxPayloadWeight),
-                    style: _overPayload ? _errorTextStyle : _okTextStyle),
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Gross weight:'),
+              SizedBox(width: 10),
+              Text(
+                poundsFormat(_totalWeight),
+                style: _overWeight ? _errorTextStyle : _okTextStyle,
+              ),
+              SizedBox(width: 5),
+              Text('/'),
+              SizedBox(width: 5),
+              Text(poundsFormat(_fleet.activeAircraft.maxGrossWeight)),
+            ],
           ),
-          VerticalDivider(),
-          Container(
-            child: Row(
-              children: [
-                Text('Passengers:', style: _overPax ? _errorTextStyle : _okTextStyle),
-                SizedBox(
-                  width: 10,
-                ),
-                Text(_totalPax.toString(), style: _overPax ? _errorTextStyle : _okTextStyle),
-                Text('/', style: _overPax ? _errorTextStyle : _okTextStyle),
-                Text(_fleet.activeAircraft.maxSeats.toString(), style: _overPax ? _errorTextStyle : _okTextStyle),
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Payload:'),
+              SizedBox(width: 10),
+              Text(
+                poundsFormat(_totalPayload),
+                style: _overPayload ? _errorTextStyle : _okTextStyle,
+              ),
+              SizedBox(width: 5),
+              Text('/'),
+              SizedBox(width: 5),
+              Text(poundsFormat(_fleet.activeAircraft.maxPayloadWeight)),
+            ],
           ),
-          VerticalDivider(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Passengers:'),
+              SizedBox(width: 10),
+              Text(
+                _totalPax.toString(),
+                style: _overPax ? _errorTextStyle : _okTextStyle,
+              ),
+              SizedBox(width: 5),
+              Text('/'),
+              SizedBox(width: 5),
+              Text(_fleet.activeAircraft.maxSeats.toString()),
+            ],
+          ),
           ElevatedButton(
-            child: Text('Add leg'),
-            onPressed: _submit,
-          )
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Add new stop to route'),
+            ),
+            onPressed: _addDisabled ? null : _submit,
+          ),
         ],
       ),
     );

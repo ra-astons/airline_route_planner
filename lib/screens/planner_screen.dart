@@ -36,29 +36,30 @@ class _PlannerScreenState extends State<PlannerScreen> {
       body: Column(
         children: [
           Expanded(
-            flex: 2,
+            flex: 3,
             child: Row(
               children: [
                 Expanded(
-                  flex: 3,
-                  child: PlannerBlock(
-                    child: PendingJobsList(),
-                  ),
+                  child: PlannerBlock(child: PendingJobsList()),
                 ),
                 Expanded(
-                  flex: 2,
                   child: PlannerBlock(child: PlannerMap()),
-                ),
+                )
               ],
             ),
           ),
-          PlannerBlock(
-            child: NewRouteLeg(),
-          ),
           Expanded(
             flex: 2,
-            child: PlannerBlock(child: RouteLegsList()),
-          ),
+            child: Row(
+              children: [
+                Expanded(child: PlannerBlock(child: NewRouteLeg())),
+                Expanded(
+                  flex: 2,
+                  child: PlannerBlock(child: RouteLegsList()),
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );

@@ -59,11 +59,79 @@ class _RouteLegsListState extends State<RouteLegsList> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             IconButton(
-              icon: Icon(Icons.refresh),
+              tooltip: 'Delete route plan',
+              icon: Icon(
+                Icons.delete,
+                color: Colors.red,
+              ),
               onPressed: _resetRoute,
             ),
           ],
         ),
+        IntrinsicHeight(
+          child: SizedBox(
+            height: 40,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                SizedBox(
+                  width: 70,
+                  child: Text(
+                    'Airport',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                VerticalDivider(),
+                SizedBox(
+                  width: 100,
+                  child: Text(
+                    'Loaded cargo',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                VerticalDivider(),
+                SizedBox(
+                  width: 130,
+                  child: Text(
+                    'Loaded passengers',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                VerticalDivider(),
+                SizedBox(
+                  width: 110,
+                  child: Text(
+                    'Unloaded cargo',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                VerticalDivider(),
+                SizedBox(
+                  width: 140,
+                  child: Text(
+                    'Unloaded passengers',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                VerticalDivider(),
+                SizedBox(
+                  width: 80,
+                  child: Text(
+                    'Loaded fuel',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Divider(height: 2),
         Expanded(
           child: ListView.builder(
             itemCount: _routePlan.legs.length,
@@ -76,60 +144,74 @@ class _RouteLegsListState extends State<RouteLegsList> {
               unloadedCargo = _routePlan.legs[index].unloadedJobLegs.fold(0.0, (sum, l) => sum + l.weight);
               var unloadedPax = 0;
               unloadedPax = _routePlan.legs[index].unloadedJobLegs.fold(0, (sum, l) => sum + l.passengers);
-              return IntrinsicHeight(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    VerticalDivider(),
-                    SizedBox(
-                      width: 40,
-                      child: Text(
-                        _routePlan.legs[index].airport.icao,
-                        textAlign: TextAlign.center,
+              return Column(
+                children: [
+                  IntrinsicHeight(
+                    child: SizedBox(
+                      height: 30,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                            width: 70,
+                            child: Text(
+                              _routePlan.legs[index].airport.icao,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          VerticalDivider(),
+                          SizedBox(
+                            width: 100,
+                            child: Text(
+                              poundsFormat(loadedCargo),
+                              textAlign: TextAlign.end,
+                              overflow: TextOverflow.fade,
+                            ),
+                          ),
+                          VerticalDivider(),
+                          SizedBox(
+                            width: 130,
+                            child: Text(
+                              loadedPax.toString(),
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.fade,
+                            ),
+                          ),
+                          VerticalDivider(),
+                          SizedBox(
+                            width: 110,
+                            child: Text(
+                              poundsFormat(unloadedCargo),
+                              textAlign: TextAlign.end,
+                              overflow: TextOverflow.fade,
+                            ),
+                          ),
+                          VerticalDivider(),
+                          SizedBox(
+                            width: 140,
+                            child: Text(
+                              unloadedPax.toString(),
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.fade,
+                            ),
+                          ),
+                          VerticalDivider(),
+                          SizedBox(
+                            width: 80,
+                            child: Text(
+                              '${_routePlan.legs[index].fuelPercentage.toString()}%',
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.fade,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    VerticalDivider(),
-                    SizedBox(
-                      width: 100,
-                      child: Text(
-                        poundsFormat(loadedCargo),
-                        textAlign: TextAlign.end,
-                      ),
-                    ),
-                    VerticalDivider(),
-                    SizedBox(
-                      width: 40,
-                      child: Text(
-                        loadedPax.toString(),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    VerticalDivider(),
-                    SizedBox(
-                      width: 100,
-                      child: Text(
-                        poundsFormat(unloadedCargo),
-                        textAlign: TextAlign.end,
-                      ),
-                    ),
-                    VerticalDivider(),
-                    SizedBox(
-                      width: 40,
-                      child: Text(
-                        unloadedPax.toString(),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    VerticalDivider(),
-                    SizedBox(
-                      width: 40,
-                      child: Text(
-                        _routePlan.legs[index].fuelPercentage.toString(),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                  Divider(
+                    height: 2,
+                  ),
+                ],
               );
             },
           ),
