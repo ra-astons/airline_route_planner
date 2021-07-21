@@ -30,6 +30,7 @@ class _PlannerMapState extends State<PlannerMap> {
   void _buildMarkers() {
     final legs = _pendingJobs.jobs.map((e) => e.selectedLegs).expand((e) => e).toList();
     _departureMarkers = _destinationMarkers = _middleMarkers = [];
+    _polylines = [];
     final legMarkers = legs.map((l) => JobLegMarkers(l));
     legMarkers.forEach((legMarker) {
       _departureMarkers.add(legMarker.departureMarker);
