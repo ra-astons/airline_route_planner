@@ -68,6 +68,13 @@ class JobLeg with ChangeNotifier {
     notifyListeners();
   }
 
+  void reset() {
+    _isSelected = false;
+    _isLoaded = false;
+    _isUnloaded = false;
+    notifyListeners();
+  }
+
   String get seatCategoryString {
     switch (seatCategory) {
       case SeatCategories.economy:

@@ -38,6 +38,10 @@ class Job {
     _showCompleted = showCompleted;
   }
 
+  void reset() {
+    legs.forEach((l) => l.reset());
+  }
+
   factory Job.fromJson(Map<String, dynamic> json) {
     final List<JobLeg> jobLegs = [];
     if (json.containsKey("Cargos")) {

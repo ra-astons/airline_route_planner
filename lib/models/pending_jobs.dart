@@ -67,4 +67,9 @@ class PendingJobs with ChangeNotifier {
     _jobs = jobs;
     notifyListeners();
   }
+
+  void reset() {
+    _jobs.forEach((j) => j.reset());
+    notifyListeners();
+  }
 }

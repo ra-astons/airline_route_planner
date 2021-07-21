@@ -31,4 +31,11 @@ class RoutePlan with ChangeNotifier {
     notifyListeners();
     return jobLegsToUnload;
   }
+
+  void reset() {
+    _legs = [];
+    _currentCargo = 0.0;
+    _currentPax = 0;
+    notifyListeners();
+  }
 }
