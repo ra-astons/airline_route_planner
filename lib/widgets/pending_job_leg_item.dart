@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../helpers/string_format.dart';
 import '../models/job_leg.dart';
 import '../models/pending_jobs.dart';
 
@@ -89,7 +90,7 @@ class _PendingJobLegItemState extends State<PendingJobLegItem> {
             SizedBox(
               width: 100,
               child: Text(
-                leg.weight == 0 ? '' : leg.weight.toString(),
+                leg.weight == 0 ? '' : poundsFormat(leg.weight),
                 textAlign: TextAlign.end,
               ),
             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
+import './string_format.dart';
 import '../models/job_leg.dart';
 
 class JobLegMarkers {
@@ -27,10 +28,10 @@ class JobLegMarkers {
 
   Marker get middleMarker {
     var icon = Icon(Icons.archive, size: 20, color: Colors.white);
-    var tooltipText = _jobLeg.weight.toString();
+    var tooltipText = poundsFormat(_jobLeg.weight);
     if (_jobLeg.passengers > 0) {
       icon = Icon(Icons.group, size: 20, color: Colors.white);
-      tooltipText = _jobLeg.passengers.toString();
+      tooltipText = '${_jobLeg.passengers} ${_jobLeg.seatCategoryString}';
     }
     return Marker(
       point: _middlePoint,
