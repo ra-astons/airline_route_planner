@@ -3,13 +3,16 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../connectors/onair_api.dart';
 import '../helpers/constants.dart';
 import '../helpers/string_format.dart';
+import '../models/airport.dart';
 import '../models/fleet.dart';
 import '../models/job_leg.dart';
 import '../models/pending_jobs.dart';
 import '../models/route_leg.dart';
 import '../models/route_plan.dart';
+import '../models/settings.dart';
 
 class NewRouteLeg extends StatefulWidget {
   @override
@@ -20,6 +23,7 @@ class _NewRouteLegState extends State<NewRouteLeg> {
   final _formKey = GlobalKey<FormState>();
   final _okTextStyle = TextStyle(color: Colors.white);
   final _errorTextStyle = TextStyle(color: Colors.red);
+  late Settings _settings;
   late PendingJobs _pendingJobs;
   late Fleet _fleet;
   late RoutePlan _routePlan;
@@ -34,20 +38,41 @@ class _NewRouteLegState extends State<NewRouteLeg> {
   var _overPax = false;
   List<JobLeg> _loadedLegs = [];
 
-  void _submit() {
+  void _submit() async {
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      final List<JobLeg> loadedJobLegs = [];
-      _pendingJobs.jobs.forEach((j) {
-        loadedJobLegs.addAll(j.selectedLegs);
-      });
-      _formKey.currentState!.reset();
-      _pendingJobs.filterByDeparture('');
-      _pendingJobs.resetSelection();
-      final unloadedJobLegs = _routePlan.addRouteLeg(RouteLeg(_airportIcao, loadedJobLegs, _loadedFuelPerc.floor()));
-      loadedJobLegs.forEach((l) => _pendingJobs.load(l.id));
-      unloadedJobLegs.forEach((l) => _pendingJobs.unload(l.id));
-      setState(() {});
+      final onAir = OnAirApi(_settings.oaApiKey, _settings.companyId);
+      try {
+        Airport airport = await onAir.fetchAirport(_airportIcao);
+        final List<JobLeg> loadedJobLegs = [];
+        _pendingJobs.jobs.forEach((j) {
+          loadedJobLegs.addAll(j.selectedLegs);
+        });
+        _formKey.currentState!.reset();
+        _pendingJobs.filterByDeparture('');
+        _pendingJobs.resetSelection();
+        final unloadedJobLegs = _routePlan.addRouteLeg(RouteLeg(airport, loadedJobLegs, _loadedFuelPerc.floor()));
+        loadedJobLegs.forEach((l) => _pendingJobs.load(l.id));
+        unloadedJobLegs.forEach((l) => _pendingJobs.unload(l.id));
+        setState(() {});
+      } catch (e) {
+        showDialog(
+          context: context,
+          builder: (ctx) {
+            return AlertDialog(
+              content: Text('Airport not found in OnAir database.\nPlease check the entered ICAO.'),
+              actions: [
+                TextButton(
+                  child: Text('Ok'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          },
+        );
+      }
     }
   }
 
@@ -90,6 +115,7 @@ class _NewRouteLegState extends State<NewRouteLeg> {
     _pendingJobs = Provider.of<PendingJobs>(context, listen: false);
     _fleet = Provider.of<Fleet>(context, listen: false);
     _routePlan = Provider.of<RoutePlan>(context, listen: false);
+    _settings = Provider.of<Settings>(context, listen: false);
     _pendingJobs.addListener(_calculateStats);
     _fleet.addListener(_calculateStats);
     _routePlan.addListener(_calculateStats);

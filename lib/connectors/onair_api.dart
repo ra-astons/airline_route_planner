@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../models/aircraft.dart';
+import '../models/airport.dart';
 import '../models/job.dart';
 
 class OnAirApiException implements Exception {
@@ -50,5 +51,11 @@ class OnAirApi {
     final url = 'https://thunder.onair.company/api/v1/company/$_companyId/jobs/pending';
     final json = await _get(url);
     return (json['Content'] as List<dynamic>).map((j) => Job.fromJson(j)).toList();
+  }
+
+  Future<Airport> fetchAirport(String icao) async {
+    final url = 'https://thunder.onair.company/api/v1/airports/$icao';
+    final json = await _get(url);
+    return Airport.fromJson(json['Content']);
   }
 }

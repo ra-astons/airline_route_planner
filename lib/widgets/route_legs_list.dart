@@ -27,7 +27,7 @@ class RouteLegsList extends StatelessWidget {
               SizedBox(
                 width: 40,
                 child: Text(
-                  routePlan.legs[index].airportIcao,
+                  routePlan.legs[index].airport.icao,
                   textAlign: TextAlign.center,
                 ),
               ),

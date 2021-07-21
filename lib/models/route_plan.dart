@@ -21,15 +21,13 @@ class RoutePlan with ChangeNotifier {
     // Unload
     final List<JobLeg> jobLegsToUnload = [];
     _legs.forEach((routeLeg) {
-      jobLegsToUnload.addAll(routeLeg.loadedJobLegs.where((l) => l.destinationAirport.icao == newRouteLeg.airportIcao));
+      jobLegsToUnload.addAll(routeLeg.loadedJobLegs.where((l) => l.destinationAirport == newRouteLeg.airport));
     });
     newRouteLeg.unloadedJobLegs = jobLegsToUnload;
     _currentCargo += jobLegsToUnload.fold(0.0, (sum, l) => sum - l.weight);
     _currentPax += jobLegsToUnload.fold(0, (sum, l) => sum - l.passengers);
 
     _legs.add(newRouteLeg);
-    newRouteLeg.loadedJobLegs.forEach((l) => l.load());
-    newRouteLeg.unloadedJobLegs.forEach((l) => l.unload());
     notifyListeners();
     return jobLegsToUnload;
   }
