@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../helpers/map_marker.dart';
+import '../models/route_plan.dart';
 import '../models/pending_jobs.dart';
 
 class PlannerMap extends StatefulWidget {
@@ -15,56 +16,46 @@ class _PlannerMapState extends State<PlannerMap> {
   final _mapController = MapController();
   final _fitBoundOptions = FitBoundsOptions(padding: EdgeInsets.all(50));
   late PendingJobs _pendingJobs;
+  late RoutePlan _routePlan;
 
-  List<Marker> _selectedLegsDepartureMarkers = [];
-  List<Marker> _selectedLegsDestinationMarkers = [];
-  List<Polyline> _selectedLegsPolylines = [];
-  List<Marker> _selectedLegsMiddleMarkers = [];
-
-  List<Marker> _loadedLegsDepartureMarkers = [];
-  List<Marker> _loadedLegsDestinationMarkers = [];
-  List<Polyline> _loadedLegsPolylines = [];
-  List<Marker> _loadedLegsMiddleMarkers = [];
-
-  List<Marker> _allMarkers = [];
+  List<Marker> _markers = [];
+  List<Polyline> _polylines = [];
 
   LatLngBounds _buildBounds() {
-    final allLatLngs = _allMarkers.map((e) => e.point).toList();
+    final allLatLngs = _markers.map((e) => e.point).toList();
     return LatLngBounds.fromPoints(allLatLngs);
   }
 
   void _buildSelectedLegsMarkers() {
+    _markers = [];
+    _polylines = [];
+
     // Selected legs
     final selectedLegs = _pendingJobs.jobs.map((e) => e.selectedLegs).expand((e) => e).toList();
-    _selectedLegsDepartureMarkers = _selectedLegsDestinationMarkers = _selectedLegsMiddleMarkers = [];
-    _selectedLegsPolylines = [];
     final selectedLegMarkers = selectedLegs.map((l) => JobLegMarkers(l, true));
     selectedLegMarkers.forEach((legMarker) {
-      _selectedLegsDepartureMarkers.add(legMarker.departureMarker);
-      _selectedLegsDestinationMarkers.add(legMarker.destinationMarker);
-      _selectedLegsMiddleMarkers.add(legMarker.middleMarker);
-      _selectedLegsPolylines.add(legMarker.pathLine);
+      _markers.add(legMarker.departureMarker);
+      _markers.add(legMarker.destinationMarker);
+      _markers.add(legMarker.middleMarker);
+      _polylines.add(legMarker.pathLine);
     });
 
     // Loaded legs
     final loadedLegs = _pendingJobs.jobs.map((e) => e.loadedLegs).expand((e) => e).toList();
-    _loadedLegsDepartureMarkers = _loadedLegsDestinationMarkers = _loadedLegsMiddleMarkers = [];
-    _loadedLegsPolylines = [];
     final loadedLegMarkers = loadedLegs.map((l) => JobLegMarkers(l));
     loadedLegMarkers.forEach((legMarker) {
-      _loadedLegsDepartureMarkers.add(legMarker.departureMarker);
-      _loadedLegsDestinationMarkers.add(legMarker.destinationMarker);
-      _loadedLegsMiddleMarkers.add(legMarker.middleMarker);
-      _loadedLegsPolylines.add(legMarker.pathLine);
+      _markers.add(legMarker.departureMarker);
+      _markers.add(legMarker.destinationMarker);
+      _markers.add(legMarker.middleMarker);
+      _polylines.add(legMarker.pathLine);
     });
 
-    _allMarkers = [
-      ..._selectedLegsDepartureMarkers,
-      ..._selectedLegsDestinationMarkers,
-      ..._loadedLegsDepartureMarkers,
-      ..._loadedLegsDestinationMarkers,
-    ];
-    if (_allMarkers.isNotEmpty) {
+    // Route
+    RouteMarkers routeMarkers = RouteMarkers(_routePlan);
+    _markers.addAll(routeMarkers.getAirportMarkers());
+    _polylines.addAll(routeMarkers.getPathLines());
+
+    if (_markers.isNotEmpty) {
       _mapController.fitBounds(_buildBounds(), options: _fitBoundOptions);
     }
     setState(() {});
@@ -74,6 +65,8 @@ class _PlannerMapState extends State<PlannerMap> {
   void initState() {
     _pendingJobs = Provider.of<PendingJobs>(context, listen: false);
     _pendingJobs.addListener(_buildSelectedLegsMarkers);
+    _routePlan = Provider.of<RoutePlan>(context, listen: false);
+    _routePlan.addListener(_buildSelectedLegsMarkers);
     super.initState();
   }
 
@@ -99,42 +92,12 @@ class _PlannerMapState extends State<PlannerMap> {
               ),
               PolylineLayerWidget(
                 options: PolylineLayerOptions(
-                  polylines: _selectedLegsPolylines,
+                  polylines: _polylines,
                 ),
               ),
               MarkerLayerWidget(
                 options: MarkerLayerOptions(
-                  markers: _selectedLegsMiddleMarkers,
-                ),
-              ),
-              MarkerLayerWidget(
-                options: MarkerLayerOptions(
-                  markers: _selectedLegsDestinationMarkers,
-                ),
-              ),
-              MarkerLayerWidget(
-                options: MarkerLayerOptions(
-                  markers: _selectedLegsDepartureMarkers,
-                ),
-              ),
-              PolylineLayerWidget(
-                options: PolylineLayerOptions(
-                  polylines: _loadedLegsPolylines,
-                ),
-              ),
-              MarkerLayerWidget(
-                options: MarkerLayerOptions(
-                  markers: _loadedLegsMiddleMarkers,
-                ),
-              ),
-              MarkerLayerWidget(
-                options: MarkerLayerOptions(
-                  markers: _loadedLegsDestinationMarkers,
-                ),
-              ),
-              MarkerLayerWidget(
-                options: MarkerLayerOptions(
-                  markers: _loadedLegsDepartureMarkers,
+                  markers: _markers,
                 ),
               ),
             ],
