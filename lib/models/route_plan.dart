@@ -13,7 +13,7 @@ class RoutePlan with ChangeNotifier {
   double get currentCargo => _currentCargo;
   int get currentPax => _currentPax;
 
-  void addRouteLeg(RouteLeg newRouteLeg) {
+  List<JobLeg> addRouteLeg(RouteLeg newRouteLeg) {
     // Load
     _currentCargo += newRouteLeg.loadedJobLegs.fold(0.0, (sum, l) => sum + l.weight);
     _currentPax += newRouteLeg.loadedJobLegs.fold(0, (sum, l) => sum + l.passengers);
@@ -31,5 +31,6 @@ class RoutePlan with ChangeNotifier {
     newRouteLeg.loadedJobLegs.forEach((l) => l.load());
     newRouteLeg.unloadedJobLegs.forEach((l) => l.unload());
     notifyListeners();
+    return jobLegsToUnload;
   }
 }

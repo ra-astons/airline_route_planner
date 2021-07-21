@@ -37,11 +37,17 @@ class _NewRouteLegState extends State<NewRouteLeg> {
   void _submit() {
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      final List<JobLeg> jobLegs = [];
+      final List<JobLeg> loadedJobLegs = [];
       _pendingJobs.jobs.forEach((j) {
-        jobLegs.addAll(j.selectedLegs);
+        loadedJobLegs.addAll(j.selectedLegs);
       });
-      _routePlan.addRouteLeg(RouteLeg(_airportIcao, jobLegs, _loadedFuelPerc.floor()));
+      _formKey.currentState!.reset();
+      _pendingJobs.filterByDeparture('');
+      _pendingJobs.resetSelection();
+      final unloadedJobLegs = _routePlan.addRouteLeg(RouteLeg(_airportIcao, loadedJobLegs, _loadedFuelPerc.floor()));
+      loadedJobLegs.forEach((l) => _pendingJobs.load(l.id));
+      unloadedJobLegs.forEach((l) => _pendingJobs.unload(l.id));
+      setState(() {});
     }
   }
 

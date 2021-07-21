@@ -28,6 +28,8 @@ class Job {
 
   List<JobLeg> get selectedLegs => _legs.where((l) => l.isSelected).toList();
 
+  List<JobLeg> get loadedLegs => _legs.where((l) => l.isLoaded).toList();
+
   void filterByDeparture(String icao) {
     _departureFilter = icao;
   }

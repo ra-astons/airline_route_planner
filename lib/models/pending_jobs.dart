@@ -48,6 +48,21 @@ class PendingJobs with ChangeNotifier {
     notifyListeners();
   }
 
+  void load(String legId) {
+    _jobs.firstWhere((j) => j.legs.any((l) => l.id == legId)).legs.firstWhere((l) => l.id == legId).load();
+    notifyListeners();
+  }
+
+  void unload(String legId) {
+    _jobs.firstWhere((j) => j.legs.any((l) => l.id == legId)).legs.firstWhere((l) => l.id == legId).unload();
+    notifyListeners();
+  }
+
+  void resetSelection() {
+    _jobs.forEach((j) => j.legs.forEach((l) => l.toggleSelect(false)));
+    notifyListeners();
+  }
+
   void updateJobs(List<Job> jobs) {
     _jobs = jobs;
     notifyListeners();

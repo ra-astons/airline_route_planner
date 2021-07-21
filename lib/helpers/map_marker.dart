@@ -10,8 +10,9 @@ class JobLegMarkers {
   late LatLng _departurePoint;
   late LatLng _destinationPoint;
   late LatLng _middlePoint;
+  final _dotted;
 
-  JobLegMarkers(this._jobLeg) {
+  JobLegMarkers(this._jobLeg, [this._dotted = false]) {
     _departurePoint = LatLng(_jobLeg.departureAirport.latitude, _jobLeg.departureAirport.longitude);
     _destinationPoint = LatLng(_jobLeg.destinationAirport.latitude, _jobLeg.destinationAirport.longitude);
     final path = Path.from([_departurePoint, _destinationPoint]);
@@ -58,6 +59,7 @@ class JobLegMarkers {
     final path = Path.from([_departurePoint, _middlePoint, _destinationPoint]).equalize(10000, smoothPath: true);
     return Polyline(
       strokeWidth: 3,
+      isDotted: _dotted,
       colorsStop: [0.0, 1.0],
       gradientColors: [
         Colors.red,
